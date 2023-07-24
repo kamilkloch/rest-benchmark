@@ -2,14 +2,18 @@ package config
 
 import cats.effect.*
 import com.comcast.ip4s.{Hostname, IpLiteralSyntax, Port}
+import fs2.io.net.SocketOption
+import io.netty.channel.ChannelOption
 import org.http4s.*
 import org.http4s.blaze.server.BlazeServerBuilder
 import org.http4s.dsl.Http4sDsl
 import org.http4s.ember.server.EmberServerBuilder
 import org.http4s.implicits.*
+import org.http4s.netty.NettyChannelOptions
 import org.http4s.netty.server.NettyServerBuilder
 import org.http4s.server.Server
 
+import java.net.StandardSocketOptions
 import scala.concurrent.duration.*
 
 /** Config shared among blaze/ember/zio-http http4s/tapir servers */
@@ -37,6 +41,10 @@ object WebServerConfig {
         .bindHttp(port.value, host.toString)
         .withoutSsl
         .withHttpApp(httpApp)
+        .withNioTransport
+        .withNettyChannelOptions(NettyChannelOptions.empty
+            .append(ChannelOption.TCP_NODELAY, java.lang.Boolean.TRUE)
+            .append(ChannelOption.SO_REUSEADDR, java.lang.Boolean.TRUE))
         .resource
     }
   }
@@ -48,6 +56,8 @@ object WebServerConfig {
         .withMaxConnections(maxConnections)
         .withConnectorPoolSize(connectorPoolSize)
         .withHttpApp(httpApp)
+        .withDefaultTcpNoDelay
+        .withDefaultSocketReuseAddress
         .resource
     }
   }
@@ -66,6 +76,10 @@ object WebServerConfig {
         .withIdleTimeout(idleTimeout)
         .withShutdownTimeout(shutdownTimeout)
         .withRequestHeaderReceiveTimeout(requestHeaderReceiveTimeout)
+        .withAdditionalSocketOptions(List(
+          SocketOption(StandardSocketOptions.TCP_NODELAY, java.lang.Boolean.TRUE),
+          SocketOption(StandardSocketOptions.SO_REUSEADDR, java.lang.Boolean.TRUE)
+        ))
         .build
     }
   }
