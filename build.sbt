@@ -64,6 +64,7 @@ lazy val server = (project in file("server"))
       "org.http4s" %% "http4s-ember-server" % http4sVersion,
 
       "com.softwaremill.sttp.tapir" %% "tapir-http4s-server" % tapirVersion,
+      "com.softwaremill.sttp.tapir" %% "tapir-netty-server-cats" % tapirVersion,
 
       "com.aitusoftware" % "babl" % bablVersion,
 

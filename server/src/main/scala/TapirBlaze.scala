@@ -1,5 +1,5 @@
 import cats.effect.{IO, IOApp}
-import config.{WebServerConfig, TapirConfig}
+import config.{TapirConfig, WebServerConfig}
 
 object TapirBlaze extends IOApp.Simple {
 

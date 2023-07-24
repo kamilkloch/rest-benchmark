@@ -2,15 +2,12 @@ package config
 
 import cats.effect.*
 import com.comcast.ip4s.{Hostname, IpLiteralSyntax, Port}
-import fs2.*
 import org.http4s.*
 import org.http4s.blaze.server.BlazeServerBuilder
 import org.http4s.dsl.Http4sDsl
 import org.http4s.ember.server.EmberServerBuilder
 import org.http4s.implicits.*
 import org.http4s.server.Server
-import org.http4s.server.websocket.WebSocketBuilder2
-import org.http4s.websocket.WebSocketFrame
 
 import scala.concurrent.duration.*
 
@@ -60,9 +57,5 @@ object WebServerConfig {
         .withRequestHeaderReceiveTimeout(requestHeaderReceiveTimeout)
         .build
     }
-  }
-
-  object netty {
-
   }
 }

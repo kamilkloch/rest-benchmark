@@ -1,24 +1,38 @@
 package config
 
 import cats.effect.*
-import fs2.*
+import config.WebServerConfig.{host, port}
 import org.http4s.*
 import org.http4s.implicits.*
 import org.http4s.server.Router
-import org.http4s.server.websocket.WebSocketBuilder2
-import sttp.capabilities.fs2.Fs2Streams
 import sttp.tapir.server.http4s.Http4sServerInterpreter
-import sttp.tapir.{CodecFormat, endpoint, stringBody, webSocketBody}
-
-import scala.concurrent.duration.*
+import sttp.tapir.server.netty.NettyConfig
+import sttp.tapir.server.netty.cats.{NettyCatsServer, NettyCatsServerBinding}
+import sttp.tapir.{endpoint, stringBody}
 
 /** Config shared among blaze/ember tapir servers */
 object TapirConfig {
-  private val helloEndpoint = endpoint.get
+  private val helloServerEndpoint = endpoint.get
     .in("hello")
     .out(stringBody)
+    .serverLogicSuccess(_ => IO.pure("world"))
 
-  private val routes = Http4sServerInterpreter[IO]().toRoutes(helloEndpoint.serverLogicSuccess(_ => IO.pure("world")))
+  private val routes = Http4sServerInterpreter[IO]().toRoutes(helloServerEndpoint)
 
   def service: HttpApp[IO] = Router("/" -> routes).orNotFound
+
+  object netty {
+    private val nettyConfig = NettyConfig
+      .defaultNoStreaming
+      .host(host.toString)
+      .port(port.value)
+
+    val serverResource: Resource[IO, NettyCatsServerBinding[IO]] =
+      NettyCatsServer.io(nettyConfig).evalMap { server =>
+        server
+          .addEndpoint(helloServerEndpoint)
+          .start()
+          .flatTap(binding => IO.println(s"Netty server started on port ${binding.port}"))
+      }
+  }
 }
