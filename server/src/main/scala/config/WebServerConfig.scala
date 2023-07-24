@@ -7,6 +7,7 @@ import org.http4s.blaze.server.BlazeServerBuilder
 import org.http4s.dsl.Http4sDsl
 import org.http4s.ember.server.EmberServerBuilder
 import org.http4s.implicits.*
+import org.http4s.netty.server.NettyServerBuilder
 import org.http4s.server.Server
 
 import scala.concurrent.duration.*
@@ -28,6 +29,16 @@ object WebServerConfig {
         case GET -> Root / "hello" => Ok("world")
       }
       .orNotFound
+  }
+
+  object netty {
+    def serverResource(httpApp: HttpApp[IO]): Resource[IO, Server] = {
+      NettyServerBuilder[IO]
+        .bindHttp(port.value, host.toString)
+        .withoutSsl
+        .withHttpApp(httpApp)
+        .resource
+    }
   }
 
   object blaze {

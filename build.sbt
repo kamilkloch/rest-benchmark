@@ -1,6 +1,7 @@
 val http4sVersion = "0.23.23"
 val blazeVersion = "0.23.15"
 val tapirVersion = "1.6.2"
+val http4sNettyVersion = "0.5.8"
 
 val catsEffectVersion = "3.5.1"
 // val catsEffectVersion = "3.6-e9aeb8c"
@@ -62,6 +63,7 @@ lazy val server = (project in file("server"))
       "org.http4s" %% "http4s-dsl" % http4sVersion,
       "org.http4s" %% "http4s-blaze-server" % blazeVersion,
       "org.http4s" %% "http4s-ember-server" % http4sVersion,
+      "org.http4s" %% "http4s-netty-server" % http4sNettyVersion,
 
       "com.softwaremill.sttp.tapir" %% "tapir-http4s-server" % tapirVersion,
       "com.softwaremill.sttp.tapir" %% "tapir-netty-server-cats" % tapirVersion,
