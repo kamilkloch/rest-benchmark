@@ -26,7 +26,7 @@ object WebServerConfig {
 
     HttpRoutes
       .of[IO] {
-        case GET -> Root / "hello" => Ok("world")
+        case GET -> Root / "ts" => IO.realTime.flatMap(t => Ok(t.toMillis.toString))
       }
       .orNotFound
   }

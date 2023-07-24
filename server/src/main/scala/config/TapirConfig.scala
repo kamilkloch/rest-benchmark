@@ -12,12 +12,12 @@ import sttp.tapir.{endpoint, stringBody}
 
 /** Config shared among blaze/ember tapir servers */
 object TapirConfig {
-  private val helloServerEndpoint = endpoint.get
-    .in("hello")
+  private val tsServerEndpoint = endpoint.get
+    .in("ts")
     .out(stringBody)
-    .serverLogicSuccess(_ => IO.pure("world"))
+    .serverLogicSuccess(_ => IO.realTime.map(_.toMillis.toString))
 
-  private val routes = Http4sServerInterpreter[IO]().toRoutes(helloServerEndpoint)
+  private val routes = Http4sServerInterpreter[IO]().toRoutes(tsServerEndpoint)
 
   def service: HttpApp[IO] = Router("/" -> routes).orNotFound
 
@@ -30,7 +30,7 @@ object TapirConfig {
     val serverResource: Resource[IO, NettyCatsServerBinding[IO]] =
       NettyCatsServer.io(nettyConfig).evalMap { server =>
         server
-          .addEndpoint(helloServerEndpoint)
+          .addEndpoint(tsServerEndpoint)
           .start()
           .flatTap(binding => IO.println(s"Netty server started on port ${binding.port}"))
       }

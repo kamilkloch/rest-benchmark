@@ -1,12 +1,15 @@
 import config.WebServerConfig
 import zio.*
+import zio.Clock.ClockLive
 import zio.http.*
 import zio.http.netty.{ChannelType, NettyConfig}
 
+import java.util.concurrent.TimeUnit
+
 object ZioHttp extends ZIOAppDefault {
   private val app: Http[Any, Nothing, Request, Response] =
-    Http.collect[Request] {
-      case Method.GET -> Root / "hello" => Response.text("world")
+    Http.collectZIO[Request] {
+      case Method.GET -> Root / "ts" => ClockLive.currentTime(TimeUnit.MILLISECONDS).map(t => Response.text(t.toString))
     }
 
   private val config = Server.Config.default.binding(WebServerConfig.host.toString, WebServerConfig.port.value)
