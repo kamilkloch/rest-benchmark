@@ -6,7 +6,7 @@ import org.http4s.*
 import org.http4s.implicits.*
 import org.http4s.server.Router
 import sttp.tapir.server.http4s.Http4sServerInterpreter
-import sttp.tapir.server.netty.NettyConfig
+import sttp.tapir.server.netty.{NettyConfig, NettySocketConfig}
 import sttp.tapir.server.netty.cats.{NettyCatsServer, NettyCatsServerBinding}
 import sttp.tapir.{endpoint, stringBody}
 
@@ -26,6 +26,7 @@ object TapirConfig {
       .defaultNoStreaming
       .host(host.toString)
       .port(port.value)
+      .socketConfig(NettySocketConfig.default.withTcpNoDelay.withReuseAddress)
 
     val serverResource: Resource[IO, NettyCatsServerBinding[IO]] =
       NettyCatsServer.io(nettyConfig).evalMap { server =>
