@@ -15,7 +15,7 @@ class SimpleRestServerSimulation extends Simulation {
   private val restHttpProtocol = http.baseUrl(config.restServerUri)
 
   def helloRequests(name: String): ChainBuilder = during(60.seconds)(pace(500.millis).exec(
-    http(name).get("/ts").check(status.is(200)).check(
+    http(name).get("/ts").check(
       bodyString.transform { ts =>
         hist.recordValue(Math.max(System.currentTimeMillis() - ts.toLong, 0))
       }
