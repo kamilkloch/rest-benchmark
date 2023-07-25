@@ -16,6 +16,7 @@ class SimpleRestServerSimulation extends Simulation {
     .baseUrl(config.restServerUri)
     .disableUrlEncoding
     .disableCaching
+    .shareConnections
 
   def helloRequests(name: String): ChainBuilder = during(60.seconds)(pace(1.millis).exec(
     http(name).get("/ts").check(
@@ -27,7 +28,7 @@ class SimpleRestServerSimulation extends Simulation {
 
   private val warmup = scenario("REST warmup")
     .exec(helloRequests("GET /ts warmup"))
-    .exec(pause(6.seconds)) // waiting for closing of all connections before measurement
+    .exec(pause(40.seconds)) // waiting for closing of all connections before measurement
     .inject(config.injectionPolicy)
 
   private val measurement = scenario("REST measurement")
