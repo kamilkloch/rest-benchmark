@@ -28,7 +28,12 @@ class SimpleRestServerSimulation extends Simulation {
 
   private val warmup = scenario("REST warmup")
     .exec(helloRequests("GET /ts warmup"))
-    .exec(pause(40.seconds)) // waiting for closing of all connections before measurement
+    .exec(pause(3.seconds)) // waiting for closing of all connections before measurement
+    .exec({
+      session =>
+        hist.reset()
+        session
+    })
     .inject(config.injectionPolicy)
 
   private val measurement = scenario("REST measurement")
