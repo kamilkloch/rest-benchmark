@@ -12,7 +12,10 @@ class SimpleRestServerSimulation extends Simulation {
 
   import SimpleRestServerSimulation.*
 
-  private val restHttpProtocol = http.baseUrl(config.restServerUri)
+  private val restHttpProtocol = http
+    .baseUrl(config.restServerUri)
+    .disableUrlEncoding
+    .disableCaching
 
   def helloRequests(name: String): ChainBuilder = during(60.seconds)(pace(1.millis).exec(
     http(name).get("/ts").check(
