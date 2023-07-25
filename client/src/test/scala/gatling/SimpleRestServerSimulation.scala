@@ -16,7 +16,6 @@ class SimpleRestServerSimulation extends Simulation {
     .baseUrl(config.restServerUri)
     .disableUrlEncoding
     .disableCaching
-    .shareConnections
 
   def helloRequests(name: String): ChainBuilder = during(60.seconds)(pace(1.millis).exec(
     http(name).get("/ts").check(
