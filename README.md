@@ -77,7 +77,8 @@ A more detailed insight is offered by the async-profiler results:
 
 ![tapir-async-profiler](results/tapir-async-profiler.png)
 
-Tapir interpreter accounts for 22% of total CPU cycles.  
+Tapir interpreter accounts for 22% of total CPU cycles. This is for a simplistic scenario with a single route, 
+minimal codec overhead, no extra tapir server interceptors. In a real-world case, the overhead will arguably be more pronounced. 
 
 ## Acknowledgements
 
