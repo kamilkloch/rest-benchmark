@@ -1,6 +1,6 @@
 val http4sVersion = "0.23.23"
 val blazeVersion = "0.23.15"
-val tapirVersion = "1.6.2"
+val tapirVersion = "1.6.3"
 val http4sNettyVersion = "0.5.8"
 
 val catsEffectVersion = "3.5.1"
@@ -13,8 +13,6 @@ val zioHttpVersion = "3.0.0-RC2"
 val zioVersion = "2.0.15"
 val gatlingVersion = "3.9.5"
 val logbackVersion = "1.4.8"
-
-val bablVersion = "0.11.0"
 
 // compiler options explicitly disabled from https://github.com/DavidGregory084/sbt-tpolecat
 val disabledScalacOptionsCompile = Set(
@@ -67,8 +65,6 @@ lazy val server = (project in file("server"))
 
       "com.softwaremill.sttp.tapir" %% "tapir-http4s-server" % tapirVersion,
       "com.softwaremill.sttp.tapir" %% "tapir-netty-server-cats" % tapirVersion,
-
-      "com.aitusoftware" % "babl" % bablVersion,
 
       "org.typelevel" %% "cats-effect" % catsEffectVersion,
       "co.fs2" %% "fs2-core" % fs2Version,

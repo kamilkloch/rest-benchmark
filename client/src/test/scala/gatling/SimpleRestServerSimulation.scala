@@ -12,9 +12,12 @@ class SimpleRestServerSimulation extends Simulation {
 
   import SimpleRestServerSimulation.*
 
-  private val restHttpProtocol = http.baseUrl(config.restServerUri)
+  private val restHttpProtocol = http
+    .baseUrl(config.restServerUri)
+    .disableUrlEncoding
+    .disableCaching
 
-  def helloRequests(name: String): ChainBuilder = during(60.seconds)(pace(500.millis).exec(
+  def helloRequests(name: String): ChainBuilder = during(60.seconds)(pace(1.millis).exec(
     http(name).get("/ts").check(
       bodyString.transform { ts =>
         hist.recordValue(Math.max(System.currentTimeMillis() - ts.toLong, 0))
@@ -24,7 +27,12 @@ class SimpleRestServerSimulation extends Simulation {
 
   private val warmup = scenario("REST warmup")
     .exec(helloRequests("GET /ts warmup"))
-    .exec(pause(6.seconds)) // waiting for closing of all connections before measurement
+    .exec(pause(3.seconds)) // waiting for closing of all connections before measurement
+    .exec({
+      session =>
+        hist.reset()
+        session
+    })
     .inject(config.injectionPolicy)
 
   private val measurement = scenario("REST measurement")
@@ -45,7 +53,7 @@ object SimpleRestServerSimulation {
   })
 
   object config {
-    val numberOfUsers = 25000
+    val numberOfUsers = 250
 
     val restServerUri = "http://127.0.0.1:8888"
 
