@@ -11,24 +11,73 @@ Client and server run on two separate machines. Both share the same setup:
 
 ### Server
 
-Server code resides in the `/server` module. Server exposes a single  GET `/hello` endpoint  
+Server code resides in the `/server` module. Server exposes a single  GET `/ts` endpoint, 
+which returns server Epoch clock.    
 
 Tested servers:
  - [http4s] + blaze ([CE] 3.5.1, [fs2] 3.7.0)
- - [http4s] + ember ([CE] 3.5.1, [fs2] 3.7.0)
- - [http4s] + netty ([CE] 3.5.1, [fs2] 3.7.0)
  - [http4s] + blaze, via [tapir] ([CE] 3.5.1, [fs2] 3.7.0) 
- - [http4s] + ember, via [tapir] ([CE] 3.5.1, [fs2] 3.7.0)
- - [http4s] + netty, via [tapir] ([CE] 3.5.1, [fs2] 3.7.0)
- - [zio-http] ([zio-http] 3.0.0-RC2, [zio] 2.0.15)
  
 ### Client 
 
-Client code resides in the `/client` module. 
+Client code resides in the `/client` module. [Gatling] client ramps up to 250k users within 30s,
+and each user issues a `GET /ts` request at a rate 1000req/s.  
+For each response, an absolute difference between the client timestamp and the timestamp received from the server
+is stored into an [HdrHistogram]. With clocks synchronized between the client and server, this value corresponds
+to the latency induced by the server.
+ 
 
+### Clock synchronization
+
+For precise measurement of latency up to milliseconds need to install, configure, and run `chrony` service.
+
+The following command could be used for installation on Ubuntu:
+```sh
+sudo apt-get -y install chrony
+```
+
+Here is a list of NTP servers that is used in our `/etc/chrony/chrony.conf`:
+```
+        server time5.facebook.com iburst
+       	server tempus1.gum.gov.pl
+	server tempus2.gum.gov.pl
+        server ntp1.tp.pl
+        server ntp2.tp.pl 
+```
+
+For non-Poland regions [other servers could be preffered](https://gist.github.com/mutin-sa/eea1c396b1e610a2da1e5550d94b0453).
+
+Finally need to restart the service after (re)configuration by:
+```
+sudo systemctl restart chrony
+```
+
+[Here](https://engineering.fb.com/2020/03/18/production-engineering/ntp-service/) is a great article about time synchronization in Facebook.
 
 ## Benchmarks
-TODO
+
+Benchmark results reside in `/results`.
+```
+ results
+ ├── http4s-blaze      (CE 3.5.1, fs2 3.7.0)
+ └── tapir-blaze       (CE 3.5.1, fs2 3.7.0, tapir 1.6.3)
+```
+
+Each folder contains:
+- [HdrHistogram] latency,
+- [Gatling] html report,
+- [async-profiler] flame graphs in 2 flavours: per-thread and aggregated.
+
+Quick summary:
+
+![tapir-blaze-hdr-histogram](results/tapir-blaze-hdr-histogram.png)
+
+It comes as no surprise that [tapir] ends up being a tad slower, due to the interpreter overhead. 
+A more detailed insight is offered by the async-profiler results:
+
+![tapir-async-profiler](results/tapir-async-profiler.png)
+
+Tapir interpreter accounts for 22% of total CPU cycles.  
 
 ## Acknowledgements
 
