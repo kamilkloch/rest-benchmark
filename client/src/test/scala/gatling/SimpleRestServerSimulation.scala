@@ -14,7 +14,7 @@ class SimpleRestServerSimulation extends Simulation {
 
   private val restHttpProtocol = http.baseUrl(config.restServerUri)
 
-  def helloRequests(name: String): ChainBuilder = during(60.seconds)(pace(500.millis).exec(
+  def helloRequests(name: String): ChainBuilder = during(60.seconds)(pace(1.millis).exec(
     http(name).get("/ts").check(
       bodyString.transform { ts =>
         hist.recordValue(Math.max(System.currentTimeMillis() - ts.toLong, 0))
@@ -45,7 +45,7 @@ object SimpleRestServerSimulation {
   })
 
   object config {
-    val numberOfUsers = 25000
+    val numberOfUsers = 250
 
     val restServerUri = "http://127.0.0.1:8888"
 
