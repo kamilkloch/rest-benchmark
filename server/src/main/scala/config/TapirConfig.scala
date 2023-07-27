@@ -41,7 +41,7 @@ object TapirConfig {
   def service: HttpApp[IO] = Router("/" -> routes).orNotFound
 
   object netty {
-    private val nettyConfig = NettyConfig
+    private def nettyConfig(connectorPoolSize: Int) = NettyConfig
       .defaultNoStreaming
       .host(host.toString)
       .port(port.value)
@@ -56,7 +56,7 @@ object TapirConfig {
             .serverLog(None)
             .options
 
-          NettyCatsServer(nettyCatsServerOptions, nettyConfig)
+          NettyCatsServer(nettyCatsServerOptions, nettyConfig(connectorPoolSize))
             .addEndpoint(tsServerEndpoint)
             .start()
             .flatTap(binding => IO.println(s"Netty server started on port ${binding.port}"))
@@ -71,7 +71,7 @@ object TapirConfig {
         .options
 
       val server: ZIO[Any, Throwable, NettyZioServerBinding[Any]] =
-        NettyZioServer(nettyZioServerOptions, nettyConfig)
+        NettyZioServer(nettyZioServerOptions, nettyConfig(connectorPoolSize * 3))
           .addEndpoint(zioTsServerEndpoint)
           .start()
           .tap(binding => Console.printLine(s"Netty server started on port ${binding.port}"))
