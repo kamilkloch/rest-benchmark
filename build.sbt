@@ -68,6 +68,7 @@ lazy val server = (project in file("server"))
 
       "com.softwaremill.sttp.tapir" %% "tapir-http4s-server" % tapirVersion,
       "com.softwaremill.sttp.tapir" %% "tapir-netty-server-cats" % tapirVersion,
+      "com.softwaremill.sttp.tapir" %% "tapir-netty-server-zio" % tapirVersion,
 
       "org.typelevel" %% "cats-effect" % catsEffectVersion,
       "co.fs2" %% "fs2-core" % fs2Version,
