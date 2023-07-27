@@ -41,7 +41,8 @@ object WebServerConfig {
         .bindHttp(port.value, host.toString)
         .withoutSsl
         .withHttpApp(httpApp)
-        .withNioTransport
+        .withNativeTransport
+        .withEventLoopThreads(connectorPoolSize)
         .withNettyChannelOptions(NettyChannelOptions.empty
             .append(ChannelOption.TCP_NODELAY, java.lang.Boolean.TRUE)
             .append(ChannelOption.SO_REUSEADDR, java.lang.Boolean.TRUE))
