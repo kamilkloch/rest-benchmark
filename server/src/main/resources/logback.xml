@@ -12,5 +12,6 @@
     </root>
 
     <logger name="ch.qos.logback" level="WARN"/>
-
+    <logger name="io.netty.bootstrap.ServerBootstrap" level="ERROR"/>
+    <logger name="io.netty.channel.DefaultChannelPipeline" level="ERROR"/>
 </configuration>

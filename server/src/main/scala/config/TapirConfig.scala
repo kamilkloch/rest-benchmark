@@ -2,12 +2,14 @@ package config
 
 import cats.effect.*
 import cats.effect.std.Dispatcher
-import config.WebServerConfig.{host, port}
+import config.WebServerConfig.{connectorPoolSize, host, port}
+import io.netty.channel.epoll.{EpollEventLoopGroup, EpollServerSocketChannel}
 import org.http4s.*
 import org.http4s.implicits.*
 import org.http4s.server.Router
 import sttp.tapir.server.http4s.{Http4sServerInterpreter, Http4sServerOptions}
 import sttp.tapir.server.netty.cats.{NettyCatsServer, NettyCatsServerBinding, NettyCatsServerOptions}
+import sttp.tapir.server.netty.NettyConfig.EventLoopConfig
 import sttp.tapir.server.netty.{NettyConfig, NettySocketConfig}
 import sttp.tapir.{endpoint, stringBody}
 
@@ -33,6 +35,7 @@ object TapirConfig {
       .defaultNoStreaming
       .host(host.toString)
       .port(port.value)
+      .eventLoopConfig(EventLoopConfig(() => new EpollEventLoopGroup(connectorPoolSize), classOf[EpollServerSocketChannel]))
       .socketConfig(NettySocketConfig.default.withTcpNoDelay.withReuseAddress)
 
     val serverResource: Resource[IO, NettyCatsServerBinding[IO]] = {

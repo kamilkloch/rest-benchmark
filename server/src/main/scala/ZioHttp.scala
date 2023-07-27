@@ -18,7 +18,7 @@ object ZioHttp extends ZIOAppDefault {
 
   private val nettyConfig = NettyConfig.default
     .leakDetection(NettyConfig.LeakDetectionLevel.DISABLED)
-    .channelType(ChannelType.NIO)
+    .channelType(ChannelType.EPOLL)
     .maxThreads(WebServerConfig.connectorPoolSize)
 
   private val nettyConfigLayer = ZLayer.succeed(nettyConfig)
