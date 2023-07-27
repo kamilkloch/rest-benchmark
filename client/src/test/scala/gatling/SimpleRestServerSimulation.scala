@@ -53,9 +53,9 @@ object SimpleRestServerSimulation {
   })
 
   object config {
-    val numberOfUsers = 250
+    val numberOfUsers = 500
 
-    val restServerUri = "http://127.0.0.1:8888"
+    val restServerUri = "http://172.16.255.3:8888"
 
     val injectionPolicy: OpenInjectionStep = rampUsers(numberOfUsers).during(30.seconds)
   }

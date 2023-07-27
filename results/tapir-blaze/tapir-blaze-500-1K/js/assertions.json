@@ -1,0 +1,10 @@
+{
+  "simulation": "gatling.SimpleRestServerSimulation",
+  "simulationId": "simplerestserversimulation-20230727085836535",
+  "start": 1690448316630,
+  "description": "",
+  "scenarios": ["REST warmup", "REST measurement"],
+  "assertions": [
+
+  ]
+}
