@@ -27,7 +27,8 @@ object TapirConfig {
 
   private val tsServerEndpoint = tsEndpoint.serverLogicSuccess(_ => IO.realTime.map(_.toMillis.toString))
 
-  private val zioTsServerEndpoint: ZServerEndpoint[Any, Any] = tsEndpoint.serverLogicSuccess(_ => ClockLive.currentTime(TimeUnit.MILLISECONDS).map(_.toString))
+  private val zioTsServerEndpoint: ZServerEndpoint[Any, Any] =
+    tsEndpoint.serverLogicSuccess(_ => ClockLive.currentTime(TimeUnit.MILLISECONDS).map(_.toString))
 
   private val serverOptions = Http4sServerOptions
     .customiseInterceptors[IO]
@@ -46,7 +47,6 @@ object TapirConfig {
       .port(port.value)
       .eventLoopConfig(EventLoopConfig(() => new EpollEventLoopGroup(connectorPoolSize), classOf[EpollServerSocketChannel]))
       .socketConfig(NettySocketConfig.default.withTcpNoDelay.withReuseAddress)
-
 
     object ce {
       val serverResource: Resource[IO, NettyCatsServerBinding[IO]] = {
