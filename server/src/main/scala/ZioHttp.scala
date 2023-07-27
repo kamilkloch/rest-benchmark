@@ -4,7 +4,7 @@ import zio.Clock.ClockLive
 import zio.http.*
 import zio.http.netty.{ChannelType, NettyConfig}
 
-import java.util.concurrent.TimeUnit
+import java.util.concurrent.{ForkJoinPool, TimeUnit}
 
 object ZioHttp extends ZIOAppDefault {
   private val app: Http[Any, Nothing, Request, Response] =
@@ -22,6 +22,11 @@ object ZioHttp extends ZIOAppDefault {
     .maxThreads(WebServerConfig.connectorPoolSize)
 
   private val nettyConfigLayer = ZLayer.succeed(nettyConfig)
+
+  override val bootstrap: ZLayer[ZIOAppArgs, Any, Any] =
+    Runtime.setExecutor(Executor.fromJavaExecutor(new ForkJoinPool(
+      Math.max(2, java.lang.Runtime.getRuntime.availableProcessors() / 2),
+      ForkJoinPool.defaultForkJoinWorkerThreadFactory, null, true)))
 
   override val run: ZIO[Any, Throwable, Nothing] = (Server.install(app).flatMap { port =>
     Console.printLine(s"Started server on port: $port")
