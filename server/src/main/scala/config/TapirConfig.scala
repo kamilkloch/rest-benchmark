@@ -5,7 +5,7 @@ import config.WebServerConfig.{host, port}
 import org.http4s.*
 import org.http4s.implicits.*
 import org.http4s.server.Router
-import sttp.tapir.server.http4s.Http4sServerInterpreter
+import sttp.tapir.server.http4s.{Http4sServerInterpreter, Http4sServerOptions}
 import sttp.tapir.server.netty.{NettyConfig, NettySocketConfig}
 import sttp.tapir.server.netty.cats.{NettyCatsServer, NettyCatsServerBinding}
 import sttp.tapir.{endpoint, stringBody}
@@ -17,7 +17,13 @@ object TapirConfig {
     .out(stringBody)
     .serverLogicSuccess(_ => IO.realTime.map(_.toMillis.toString))
 
-  private val routes = Http4sServerInterpreter[IO]().toRoutes(tsServerEndpoint)
+  private val serverOptions = Http4sServerOptions
+    .customiseInterceptors[IO]
+    .serverLog(None)
+    .options
+
+  private val routes = Http4sServerInterpreter[IO](serverOptions)
+    .toRoutes(tsServerEndpoint)
 
   def service: HttpApp[IO] = Router("/" -> routes).orNotFound
 
