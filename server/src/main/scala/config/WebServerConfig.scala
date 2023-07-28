@@ -9,7 +9,7 @@ import org.http4s.blaze.server.BlazeServerBuilder
 import org.http4s.dsl.Http4sDsl
 import org.http4s.ember.server.EmberServerBuilder
 import org.http4s.implicits.*
-import org.http4s.netty.NettyChannelOptions
+import org.http4s.netty.{NettyChannelOptions, NettyTransport}
 import org.http4s.netty.server.NettyServerBuilder
 import org.http4s.server.Server
 
@@ -41,7 +41,7 @@ object WebServerConfig {
         .bindHttp(port.value, host.toString)
         .withoutSsl
         .withHttpApp(httpApp)
-        .withNativeTransport
+        .withTransport(NettyTransport.Epoll)
         .withEventLoopThreads(connectorPoolSize)
         .withNettyChannelOptions(NettyChannelOptions.empty
             .append(ChannelOption.TCP_NODELAY, java.lang.Boolean.TRUE)

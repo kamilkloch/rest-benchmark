@@ -1,7 +1,7 @@
 val http4sVersion = "0.23.23"
 val blazeVersion = "0.23.15"
 val tapirVersion = "1.6.3"
-val http4sNettyVersion = "0.5.8"
+val http4sNettyVersion = "0.5.9"
 
 val catsEffectVersion = "3.5.1"
 // val catsEffectVersion = "3.6-e9aeb8c"
