@@ -2,7 +2,7 @@ package config
 
 import cats.effect.*
 import cats.effect.std.Dispatcher
-import config.WebServerConfig.{connectorPoolSize, host, port}
+import config.WebServerConfig.{connectorPoolSize, host, mainPoolSize, port}
 import io.netty.channel.epoll.{EpollEventLoopGroup, EpollServerSocketChannel}
 import org.http4s.*
 import org.http4s.implicits.*
@@ -24,17 +24,13 @@ object TapirConfig {
   private val tsEndpoint = endpoint.get
     .in("ts")
     .out(stringBody)
-
   private val tsServerEndpoint = tsEndpoint.serverLogicSuccess(_ => IO.realTime.map(_.toMillis.toString))
-
   private val zioTsServerEndpoint: ZServerEndpoint[Any, Any] =
     tsEndpoint.serverLogicSuccess(_ => ClockLive.currentTime(TimeUnit.MILLISECONDS).map(_.toString))
-
   private val serverOptions = Http4sServerOptions
     .customiseInterceptors[IO]
     .serverLog(None)
     .options
-
   private val routes = Http4sServerInterpreter[IO](serverOptions)
     .toRoutes(tsServerEndpoint)
 
@@ -71,7 +67,7 @@ object TapirConfig {
         .options
 
       val server: ZIO[Any, Throwable, NettyZioServerBinding[Any]] =
-        NettyZioServer(nettyZioServerOptions, nettyConfig(connectorPoolSize * 3))
+        NettyZioServer(nettyZioServerOptions, nettyConfig(connectorPoolSize + mainPoolSize))
           .addEndpoint(zioTsServerEndpoint)
           .start()
           .tap(binding => Console.printLine(s"Netty server started on port ${binding.port}"))

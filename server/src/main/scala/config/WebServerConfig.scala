@@ -18,14 +18,15 @@ import scala.concurrent.duration.*
 
 /** Config shared among blaze/ember/zio-http http4s/tapir servers */
 object WebServerConfig {
-
   val port: Port = port"8888"
   val host: Hostname = host"0.0.0.0"
+  val mainPoolSize: Int = Math.max(2, Runtime.getRuntime.availableProcessors() / 2)
   val connectorPoolSize: Int = Math.max(2, Runtime.getRuntime.availableProcessors() / 4)
   private val maxConnections: Int = 65536
 
   val service: HttpApp[IO] = {
     val dsl = new Http4sDsl[IO] {}
+
     import dsl.*
 
     HttpRoutes
@@ -64,23 +65,16 @@ object WebServerConfig {
   }
 
   object ember {
-    private val idleTimeout: FiniteDuration = 1.hour
-    private val shutdownTimeout: FiniteDuration = 1.hour
-    private val requestHeaderReceiveTimeout: FiniteDuration = 1.hour
-
     def serverResource(httpApp: HttpApp[IO]): Resource[IO, Server] = {
       EmberServerBuilder.default[IO]
         .withPort(port)
         .withHost(host)
         .withMaxConnections(maxConnections)
         .withHttpApp(httpApp)
-        .withIdleTimeout(idleTimeout)
-        .withShutdownTimeout(shutdownTimeout)
-        .withRequestHeaderReceiveTimeout(requestHeaderReceiveTimeout)
+        .withIdleTimeout(1.hour)
         .withAdditionalSocketOptions(List(
           SocketOption(StandardSocketOptions.TCP_NODELAY, java.lang.Boolean.TRUE),
-          SocketOption(StandardSocketOptions.SO_REUSEADDR, java.lang.Boolean.TRUE)
-        ))
+          SocketOption(StandardSocketOptions.SO_REUSEADDR, java.lang.Boolean.TRUE)))
         .build
     }
   }
