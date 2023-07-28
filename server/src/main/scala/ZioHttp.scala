@@ -11,25 +11,17 @@ object ZioHttp extends ZIOAppDefault {
     Http.collectZIO[Request] {
       case Method.GET -> Root / "ts" => ClockLive.currentTime(TimeUnit.MILLISECONDS).map(t => Response.text(t.toString))
     }
-
-  private val config = Server.Config.default.binding(WebServerConfig.host.toString, WebServerConfig.port.value)
-
-  private val configLayer = ZLayer.succeed(config)
-
+  private val serverConfig =
+    Server.Config.default.binding(WebServerConfig.host.toString, WebServerConfig.port.value)
   private val nettyConfig = NettyConfig.default
     .leakDetection(NettyConfig.LeakDetectionLevel.DISABLED)
     .channelType(ChannelType.EPOLL)
     .maxThreads(WebServerConfig.connectorPoolSize)
-
-  private val nettyConfigLayer = ZLayer.succeed(nettyConfig)
-
   override val bootstrap: ZLayer[ZIOAppArgs, Any, Any] =
-    Runtime.setExecutor(Executor.fromJavaExecutor(new ForkJoinPool(
-      Math.max(2, java.lang.Runtime.getRuntime.availableProcessors() / 2),
+    Runtime.setExecutor(Executor.fromJavaExecutor(new ForkJoinPool(WebServerConfig.mainPoolSize,
       ForkJoinPool.defaultForkJoinWorkerThreadFactory, null, true)))
-
   override val run: ZIO[Any, Throwable, Nothing] = (Server.install(app).flatMap { port =>
     Console.printLine(s"Started server on port: $port")
   } *> ZIO.never)
-    .provide(configLayer, nettyConfigLayer, Server.customized)
+    .provide(ZLayer.succeed(serverConfig), ZLayer.succeed(nettyConfig), Server.customized)
 }

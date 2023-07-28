@@ -24,17 +24,13 @@ object TapirConfig {
   private val tsEndpoint = endpoint.get
     .in("ts")
     .out(stringBody)
-
   private val tsServerEndpoint = tsEndpoint.serverLogicSuccess(_ => IO.realTime.map(_.toMillis.toString))
-
   private val zioTsServerEndpoint: ZServerEndpoint[Any, Any] =
     tsEndpoint.serverLogicSuccess(_ => ClockLive.currentTime(TimeUnit.MILLISECONDS).map(_.toString))
-
   private val serverOptions = Http4sServerOptions
     .customiseInterceptors[IO]
     .serverLog(None)
     .options
-
   private val routes = Http4sServerInterpreter[IO](serverOptions)
     .toRoutes(tsServerEndpoint)
 
