@@ -48,7 +48,7 @@ Here is a list of NTP servers that is used in our `/etc/chrony/chrony.conf`:
         server ntp2.tp.pl 
 ```
 
-For non-Poland regions [other servers could be preffered](https://gist.github.com/mutin-sa/eea1c396b1e610a2da1e5550d94b0453).
+For non-Poland regions [other servers could be preferred](https://gist.github.com/mutin-sa/eea1c396b1e610a2da1e5550d94b0453).
 
 Finally, need to restart the service after (re)configuration by:
 ```
