@@ -16,8 +16,12 @@ which returns server Epoch clock.
 
 Tested servers:
  - [http4s] + blaze ([CE] 3.5.1, [fs2] 3.7.0)
+ - [http4s-netty] ([CE] 3.5.1, [fs2] 3.7.0)
  - [http4s] + blaze, via [tapir] ([CE] 3.5.1, [fs2] 3.7.0) 
- 
+ - [netty], via [tapir] ([CE] 3.5.1, [fs2] 3.7.0) 
+ - [zio-http] ([zio-http] 3.0.0-RC2, [zio] 2.0.15)
+ - [netty], via [tapir] ([zio] 2.0.15)
+
 ### Client 
 
 Client code resides in the `/client` module. [Gatling] client ramps up to 250k users within 30s,
@@ -26,7 +30,6 @@ For each response, an absolute difference between the client timestamp and the t
 is stored into an [HdrHistogram]. With clocks synchronized between the client and server, this value corresponds
 to the latency induced by the server.
  
-
 ### Clock synchronization
 
 For precise measurement of latency up to milliseconds need to install, configure, and run `chrony` service.
@@ -40,14 +43,14 @@ Here is a list of NTP servers that is used in our `/etc/chrony/chrony.conf`:
 ```
         server time5.facebook.com iburst
        	server tempus1.gum.gov.pl
-	server tempus2.gum.gov.pl
+       	server tempus2.gum.gov.pl
         server ntp1.tp.pl
         server ntp2.tp.pl 
 ```
 
 For non-Poland regions [other servers could be preffered](https://gist.github.com/mutin-sa/eea1c396b1e610a2da1e5550d94b0453).
 
-Finally need to restart the service after (re)configuration by:
+Finally, need to restart the service after (re)configuration by:
 ```
 sudo systemctl restart chrony
 ```
@@ -60,7 +63,11 @@ Benchmark results reside in `/results`.
 ```
  results
  ├── http4s-blaze      (CE 3.5.1, fs2 3.7.0)
- └── tapir-blaze       (CE 3.5.1, fs2 3.7.0, tapir 1.6.3)
+ ├── http4s-netty      (CE 3.5.1, fs2 3.7.0)
+ ├── tapir-blaze       (CE 3.5.1, fs2 3.7.0, tapir 1.6.3)
+ ├── tapir-netty       (CE 3.5.1, fs2 3.7.0, tapir 1.6.3)
+ ├── zio-http          (zio-http 3.0.0-RC2, zio 2.0.15)
+ └── zio-tapir-netty   (tapir 1.6.3)
 ```
 
 Each folder contains:
@@ -70,15 +77,7 @@ Each folder contains:
 
 Quick summary:
 
-![tapir-blaze-hdr-histogram](results/tapir-blaze-hdr-histogram.png)
-
-It comes as no surprise that [tapir] ends up being a tad slower, due to the interpreter overhead. 
-A more detailed insight is offered by the async-profiler results:
-
-![tapir-async-profiler](results/tapir-async-profiler.png)
-
-Tapir interpreter accounts for 22% of total CPU cycles. This is for a simplistic scenario with a single route, 
-minimal codec overhead, no extra tapir server interceptors. In a real-world case, the overhead will arguably be more pronounced. 
+![rest-benchmark-500-1k](results/rest-benchmark-500-1k.png)
 
 ## Acknowledgements
 
@@ -87,8 +86,9 @@ Thank, you Andriy!
 
 [tapir]: https://github.com/softwaremill/tapir
 [gatling]: https://github.com/gatling/gatling
-[babl]: https://github.com/babl-ws/babl
 [http4s]: https://github.com/http4s/http4s
+[http4s-netty]: https://github.com/http4s/http4s-netty
+[netty]: https://github.com/netty/netty
 [zio-http]: https://github.com/zio/zio-http
 [zio]: https://github.com/zio/zio
 [CE]: https://github.com/typelevel/cats-effect
