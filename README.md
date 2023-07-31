@@ -24,8 +24,8 @@ Tested servers:
 
 ### Client 
 
-Client code resides in the `/client` module. [Gatling] client ramps up to 250k users within 30s,
-and each user issues a `GET /ts` request at a rate 1000req/s.  
+Client code resides in the `/client` module. [Gatling] client ramps up to 500 user connections within 30s,
+and each user issues a `GET /ts` request at a rate 1K req/s.  
 For each response, an absolute difference between the client timestamp and the timestamp received from the server
 is stored into an [HdrHistogram]. With clocks synchronized between the client and server, this value corresponds
 to the latency induced by the server.
