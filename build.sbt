@@ -1,18 +1,18 @@
 val http4sVersion = "0.23.23"
 val blazeVersion = "0.23.15"
-val tapirVersion = "1.6.3"
-val http4sNettyVersion = "0.5.9"
+val tapirVersion = "1.8.2"
+val http4sNettyVersion = "0.5.11"
 
-val catsEffectVersion = "3.5.1"
+val catsEffectVersion = "3.5.2"
 // val catsEffectVersion = "3.6-e9aeb8c"
 
-val fs2Version = "3.7.0"
+val fs2Version = "3.9.2"
 // val fs2Version = "3.8-1af22dd"
 
 val zioHttpVersion = "3.0.0-RC2"
-val zioVersion = "2.0.15"
+val zioVersion = "2.0.18"
 val gatlingVersion = "3.9.5"
-val logbackVersion = "1.4.8"
+val logbackVersion = "1.4.11"
 
 // compiler options explicitly disabled from https://github.com/DavidGregory084/sbt-tpolecat
 val disabledScalacOptionsCompile = Set(
@@ -24,7 +24,7 @@ lazy val commonSettings = Def.settings(
   name := "rest-benchmark",
   version := "0.1.0-SNAPSHOT",
   fork := true,
-  scalaVersion := "2.13.11",
+  scalaVersion := "2.13.12",
   scalacOptions ++= Seq("-release", "17"),
   javacOptions ++= Seq("-source", "17", "-target", "17"),
   Compile / scalacOptions ~= ((options: Seq[String]) => options.filterNot(disabledScalacOptionsCompile)),
