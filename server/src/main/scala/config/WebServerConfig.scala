@@ -1,7 +1,7 @@
 package config
 
 import cats.effect.*
-import com.comcast.ip4s.{Hostname, IpLiteralSyntax, Port}
+import com.comcast.ip4s.*
 import fs2.io.net.SocketOption
 import io.netty.channel.ChannelOption
 import org.http4s.*

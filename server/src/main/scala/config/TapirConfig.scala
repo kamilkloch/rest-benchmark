@@ -13,7 +13,7 @@ import sttp.tapir.server.netty.cats.{NettyCatsServer, NettyCatsServerBinding, Ne
 import sttp.tapir.server.netty.zio.{NettyZioServer, NettyZioServerBinding, NettyZioServerOptions}
 import sttp.tapir.server.netty.{NettyConfig, NettySocketConfig}
 import sttp.tapir.ztapir.ZServerEndpoint
-import sttp.tapir.{endpoint, stringBody}
+import sttp.tapir.*
 import zio.Clock.ClockLive
 import zio.{Console, ZIO}
 

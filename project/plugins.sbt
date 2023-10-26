@@ -1,6 +1,6 @@
 addSbtPlugin("com.github.sbt" % "sbt-native-packager" % "1.9.16")
 
-addSbtPlugin("io.github.davidgregory084" % "sbt-tpolecat" % "0.4.4")
+addSbtPlugin("org.typelevel" % "sbt-tpolecat" % "0.5.0")
 
 // former sbt-dependency-graph built into sbt 1.4.x
 addDependencyTreePlugin
