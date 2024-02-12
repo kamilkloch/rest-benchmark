@@ -37,8 +37,7 @@ object TapirConfig {
   def service: HttpApp[IO] = Router("/" -> routes).orNotFound
 
   object netty {
-    private def nettyConfig(connectorPoolSize: Int) = NettyConfig
-      .defaultNoStreaming
+    private def nettyConfig(connectorPoolSize: Int) = NettyConfig.default
       .host(host.toString)
       .port(port.value)
       .eventLoopConfig(EventLoopConfig(() => new EpollEventLoopGroup(connectorPoolSize), classOf[EpollServerSocketChannel]))

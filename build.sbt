@@ -1,18 +1,13 @@
-val http4sVersion = "0.23.23"
-val blazeVersion = "0.23.15"
-val tapirVersion = "1.8.2"
-val http4sNettyVersion = "0.5.11"
-
-val catsEffectVersion = "3.5.2"
-// val catsEffectVersion = "3.6-e9aeb8c"
-
-val fs2Version = "3.9.2"
-// val fs2Version = "3.8-1af22dd"
-
+val http4sVersion = "0.23.25"
+val blazeVersion = "0.23.16"
+val tapirVersion = "1.9.9"
+val http4sNettyVersion = "0.5.12"
+val catsEffectVersion = "3.5.3"
+val fs2Version = "3.9.4"
 val zioHttpVersion = "3.0.0-RC2"
-val zioVersion = "2.0.18"
-val gatlingVersion = "3.9.5"
-val logbackVersion = "1.4.11"
+val zioVersion = "2.0.21"
+val gatlingVersion = "3.10.3"
+val logbackVersion = "1.4.14"
 
 // compiler options explicitly disabled from https://github.com/DavidGregory084/sbt-tpolecat
 val disabledScalacOptionsCompile = Set(
@@ -25,8 +20,8 @@ lazy val commonSettings = Def.settings(
   version := "0.1.0-SNAPSHOT",
   fork := true,
   scalaVersion := "3.3.1",
-  scalacOptions ++= Seq("-release", "17"),
-  javacOptions ++= Seq("-source", "17", "-target", "17"),
+  scalacOptions ++= Seq("-release", "21"),
+  javacOptions ++= Seq("-source", "21", "-target", "21"),
   Compile / scalacOptions ~= ((options: Seq[String]) => options.filterNot(disabledScalacOptionsCompile)),
   Compile / scalacOptions ++= Seq(
     "-Wnonunit-statement",
@@ -45,6 +40,7 @@ lazy val commonSettings = Def.settings(
     "-Xmx32g",
     "-XX:+AlwaysPreTouch",
     "-XX:+UseZGC",
+    "-XX:+ZGenerational",
   ),
 )
 
@@ -59,18 +55,14 @@ lazy val server = (project in file("server"))
       "org.http4s" %% "http4s-blaze-server" % blazeVersion,
       "org.http4s" %% "http4s-ember-server" % http4sVersion,
       "org.http4s" %% "http4s-netty-server" % http4sNettyVersion,
-
       "com.softwaremill.sttp.tapir" %% "tapir-http4s-server" % tapirVersion,
       "com.softwaremill.sttp.tapir" %% "tapir-netty-server-cats" % tapirVersion,
       "com.softwaremill.sttp.tapir" %% "tapir-netty-server-zio" % tapirVersion,
-
       "org.typelevel" %% "cats-effect" % catsEffectVersion,
       "co.fs2" %% "fs2-core" % fs2Version,
       "co.fs2" %% "fs2-io" % fs2Version,
-
       "dev.zio" %% "zio" % zioVersion,
       "dev.zio" %% "zio-http" % zioHttpVersion,
-
       "ch.qos.logback" % "logback-classic" % logbackVersion,
     )
   )
@@ -91,6 +83,7 @@ lazy val server = (project in file("server"))
       "-J-Xmx32g",
       "-J-XX:+AlwaysPreTouch",
       "-J-XX:+UseZGC",
+      "-XX:+ZGenerational",
     )
   )
 
@@ -102,7 +95,6 @@ lazy val client = (project in file("client"))
     libraryDependencies ++= Seq(
       "io.gatling.highcharts" % "gatling-charts-highcharts" % gatlingVersion % Test,
       "io.gatling" % "gatling-test-framework" % gatlingVersion % Test,
-
       "ch.qos.logback" % "logback-classic" % logbackVersion,
     ),
     Gatling / javaOptions := overrideDefaultJavaOptions(
@@ -116,6 +108,7 @@ lazy val client = (project in file("client"))
       "-Xmx32g",
       "-XX:+AlwaysPreTouch",
       "-XX:+UseZGC",
+      "-XX:+ZGenerational",
     ),
   )
 
