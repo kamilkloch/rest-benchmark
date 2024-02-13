@@ -41,6 +41,13 @@ lazy val commonSettings = Def.settings(
     "-XX:+AlwaysPreTouch",
     "-XX:+UseZGC",
     "-XX:+ZGenerational",
+    "-XX:TLABSize=1m",
+    "-XX:-ResizeTLAB",
+    "-XX:InitialCodeCacheSize=256m",
+    "-XX:ReservedCodeCacheSize=256m",
+    "-XX:NonNMethodCodeHeapSize=16m",
+    "-XX:NonProfiledCodeHeapSize=120m",
+    "-XX:ProfiledCodeHeapSize=120m",
   ),
 )
 
@@ -83,7 +90,14 @@ lazy val server = (project in file("server"))
       "-J-Xmx32g",
       "-J-XX:+AlwaysPreTouch",
       "-J-XX:+UseZGC",
-      "-XX:+ZGenerational",
+      "-J-XX:+ZGenerational",
+      "-J-XX:TLABSize=1m",
+      "-J-XX:-ResizeTLAB",
+      "-J-XX:InitialCodeCacheSize=256m",
+      "-J-XX:ReservedCodeCacheSize=256m",
+      "-J-XX:NonNMethodCodeHeapSize=16m",
+      "-J-XX:NonProfiledCodeHeapSize=120m",
+      "-J-XX:ProfiledCodeHeapSize=120m",
     )
   )
 
@@ -109,6 +123,13 @@ lazy val client = (project in file("client"))
       "-XX:+AlwaysPreTouch",
       "-XX:+UseZGC",
       "-XX:+ZGenerational",
+      "-XX:TLABSize=1m",
+      "-XX:-ResizeTLAB",
+      "-XX:InitialCodeCacheSize=256m",
+      "-XX:ReservedCodeCacheSize=256m",
+      "-XX:NonNMethodCodeHeapSize=16m",
+      "-XX:NonProfiledCodeHeapSize=120m",
+      "-XX:ProfiledCodeHeapSize=120m",
     ),
   )
 
