@@ -6,8 +6,8 @@ Client and server run on two separate machines. Both share the same setup:
  - Intel® Core™ i9-13900K CPU @ 3.0GHz (max 5.8GHz, performance-cores only), 
  - RAM 64GB DDR5-4800,
  - 10Gbit network,
- - Ubuntu 23.04 (Linux 6.2), 
- - Oracle GraalVM 23.0 for Java 20.
+ - Ubuntu 23.04 (Linux 6.6), 
+ - Oracle JDK 21.
 
 ### Server
 
@@ -15,12 +15,12 @@ Server code resides in the `/server` module. Server exposes a single  GET `/ts` 
 which returns server Epoch clock.    
 
 Tested servers:
- - [http4s] + blaze ([CE] 3.5.1, [fs2] 3.7.0)
- - [http4s-netty] ([CE] 3.5.1, [fs2] 3.7.0)
- - [http4s] + blaze, via [tapir] ([CE] 3.5.1, [fs2] 3.7.0) 
- - [netty], via [tapir] ([CE] 3.5.1, [fs2] 3.7.0) 
- - [zio-http] ([zio-http] 3.0.0-RC2, [zio] 2.0.15)
- - [netty], via [tapir] ([zio] 2.0.15)
+ - [http4s] + blaze ([CE] 3.5.3, [fs2] 3.9.4)
+ - [http4s-netty] ([CE] 3.5.3, [fs2] 3.9.4)
+ - [http4s] + blaze, via [tapir] ([CE] 3.5.3, [fs2] 3.9.4) 
+ - [netty], via [tapir] ([CE] 3.5.3, [fs2] 3.9.4) 
+ - [zio-http] ([zio-http] 3.0.0-RC2, [zio] 2.0.21)
+ - [netty], via [tapir] ([zio] 2.0.21)
 
 ### Client 
 
@@ -62,12 +62,13 @@ sudo systemctl restart chrony
 Benchmark results reside in `/results`.
 ```
  results
- ├── http4s-blaze      (CE 3.5.1, fs2 3.7.0)
- ├── http4s-netty      (CE 3.5.1, fs2 3.7.0)
- ├── tapir-blaze       (CE 3.5.1, fs2 3.7.0, tapir 1.6.3)
- ├── tapir-netty       (CE 3.5.1, fs2 3.7.0, tapir 1.6.3)
- ├── zio-http          (zio-http 3.0.0-RC2, zio 2.0.15)
- └── zio-tapir-netty   (tapir 1.6.3)
+ ├── http4s-blaze      (CE 3.5.3, fs2 3.9.4)
+ ├── http4s-netty      (CE 3.5.3, fs2 3.9.4)
+ ├── tapir-blaze       (CE 3.5.3, fs2 3.9.4, tapir 1.9.9, server log off)
+ ├── tapir-blaze-log   (CE 3.5.3, fs2 3.9.4, tapir 1.9.9, server log on)
+ ├── tapir-netty       (CE 3.5.3, fs2 3.9.4, tapir 1.9.9)
+ ├── zio-http          (zio-http 3.0.0-RC2, zio 2.0.21)
+ └── zio-tapir-netty   (tapir 1.9.9)
 ```
 
 Each folder contains:
@@ -78,6 +79,20 @@ Each folder contains:
 Quick summary:
 
 ![rest-benchmark-500-1k](results/rest-benchmark-500-1k.png)
+
+## How to run benchmarks
+
+Note: you need Java 21.0.1+ to build and run the benchmarks.
+
+1. Build server binaries via
+   ```bash
+   sbt stage
+   ```
+2. Start the desired server using binaries found in `server/target/universal/stage/bin`
+3. Start [gatling] web socket client via
+   ```bash
+    sbt client/Gatling/test
+   ```
 
 ## Acknowledgements
 
